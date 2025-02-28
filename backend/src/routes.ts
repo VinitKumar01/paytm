@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as z from "zod";
-import { UserModel } from "./db";
+import { AccountsModel, UserModel } from "./db";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { userMiddleware } from "./middlewares/userMiddleware";
@@ -54,13 +54,19 @@ export const Signup = Router().post("/signup", async (req, res) => {
   }
 
   try {
-    await UserModel.create({
+    const user = await UserModel.create({
       firstname,
       lastname,
       username,
       email,
       password: hashedPassword,
     });
+
+    await AccountsModel.create({
+      userId: user._id,
+      balance: 1 + Math.random() * 10000
+    })
+
     res.json({
       message: "User Signed Up",
     });
@@ -225,3 +231,7 @@ export const Bulk = Router().post("/users/bulk", async (req, res) => {
     });
   }
 });
+
+export const AccountRouter = Router().post("/account", async (req, res)=> {
+  
+})
