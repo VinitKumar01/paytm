@@ -1,10 +1,9 @@
 import { Router } from "express";
 import * as z from "zod";
-import { AccountsModel, UserModel } from "./db";
+import { AccountsModel, UserModel } from "../db";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
-import { userMiddleware } from "./middlewares/userMiddleware";
-import { ObjectId } from "mongoose";
+import { userMiddleware } from "../middlewares/userMiddleware";
 
 const userInputSchema = z.object({
   firstname: z.string({ required_error: "First name must be provided" }),
@@ -28,7 +27,9 @@ const userInputSchema = z.object({
     }),
 });
 
-export const Signup = Router().post("/signup", async (req, res) => {
+export const UserRouter = Router();
+
+UserRouter.post("/signup", async (req, res) => {
   const { error } = userInputSchema.safeParse(req.body);
 
   if (error) {
@@ -42,8 +43,7 @@ export const Signup = Router().post("/signup", async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const alreadyExists = await UserModel.findOne({
-    email,
-    username,
+    $or: [{ email }, { username }],
   });
 
   if (alreadyExists) {
@@ -64,7 +64,7 @@ export const Signup = Router().post("/signup", async (req, res) => {
 
     await AccountsModel.create({
       userId: user._id,
-      balance: 1 + Math.random() * 10000
+      balance: 1 + parseInt((Math.random() * 10000).toFixed(2))
     })
 
     res.json({
@@ -83,7 +83,7 @@ const userSigninSchema = userInputSchema.omit({
   lastname: true,
 });
 
-export const Signin = Router().post("/signin", async (req, res) => {
+UserRouter.post("/signin", async (req, res) => {
   const { error } = userSigninSchema.safeParse(req.body);
 
   if (error) {
@@ -131,7 +131,7 @@ const updateUserInputSchema = userInputSchema.omit({
   username: true,
 });
 
-export const Update = Router().put(
+UserRouter.put(
   "/update",
   userMiddleware,
   async (req, res) => {
@@ -177,7 +177,7 @@ export const Update = Router().put(
   }
 );
 
-export const Bulk = Router().post("/users/bulk", async (req, res) => {
+UserRouter.get("/bulk", async (req, res) => {
   const filter = req.query.filter || "";
 
   try {
@@ -210,12 +210,7 @@ export const Bulk = Router().post("/users/bulk", async (req, res) => {
 
     res.json(
       users.map(
-        (user: {
-          firstname: string;
-          lastname: string;
-          username: string;
-          _id: ObjectId;
-        }) => {
+        (user) => {
           return {
             firstname: user.firstname,
             lastname: user.lastname,
@@ -231,7 +226,3 @@ export const Bulk = Router().post("/users/bulk", async (req, res) => {
     });
   }
 });
-
-export const AccountRouter = Router().post("/account", async (req, res)=> {
-  
-})
