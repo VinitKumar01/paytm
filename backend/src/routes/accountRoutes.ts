@@ -20,7 +20,7 @@ AccountRouter.get("/balance", userMiddleware, async (req, res)=> {
   }
 
   res.json({
-    balance: user.balance
+    balance: user.balance / 100
   })
 })
 
@@ -71,7 +71,7 @@ AccountRouter.post('/transfer', userMiddleware, async (req, res)=> {
       return;
     }
 
-    if (sendersAccount.balance < amount) {
+    if (sendersAccount.balance <= amount && amount > 0) {
       await session.abortTransaction();
       await session.endSession();
       res.status(400).json({
@@ -79,11 +79,12 @@ AccountRouter.post('/transfer', userMiddleware, async (req, res)=> {
       })
       return;
     }
+    const amountInPaise = parseInt(amount) * 100;
 
-    sendersAccount.balance -= parseInt(amount);
+    sendersAccount.balance -= amountInPaise;
     await sendersAccount.save({session});
 
-    reciversAccount.balance += parseInt(amount);
+    reciversAccount.balance += amountInPaise;
     await reciversAccount.save({session});
 
     await session.commitTransaction();
