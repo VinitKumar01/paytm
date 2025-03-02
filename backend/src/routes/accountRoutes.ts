@@ -79,7 +79,7 @@ AccountRouter.post('/transfer', userMiddleware, async (req, res)=> {
       })
       return;
     }
-    const amountInPaise = parseInt(amount) * 100;
+    const amountInPaise = parseInt(amount.toFixed(2)) * 100;
 
     sendersAccount.balance -= amountInPaise;
     await sendersAccount.save({session});
