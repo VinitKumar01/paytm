@@ -70,9 +70,9 @@ AccountRouter.post('/transfer', userMiddleware, async (req, res)=> {
       })
       return;
     }
-    const amountInPaise = parseInt(amount.toFixed(2)) * 100;
+    const amountInPaise = Math.round(amount * 100);
 
-    if (sendersAccount.balance <= amountInPaise && amountInPaise > 0) {
+    if (sendersAccount.balance <= amountInPaise && amountInPaise < 0) {
       await session.abortTransaction();
       await session.endSession();
       res.status(400).json({
