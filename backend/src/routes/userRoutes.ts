@@ -183,21 +183,9 @@ UserRouter.get("/bulk", async (req, res) => {
   try {
     const users = await UserModel.find({
       $or: [
-        {
-          firstname: {
-            $regex: filter,
-          },
-        },
-        {
-          lastname: {
-            $regex: filter,
-          },
-        },
-        {
-          username: {
-            $regex: filter,
-          },
-        },
+        { firstname: { $regex: `^${filter}`, $options: "i" } },
+        { lastname: { $regex: `^${filter}`, $options: "i" } },
+        { username: { $regex: `^${filter}`, $options: "i" } },
       ],
     });
 
