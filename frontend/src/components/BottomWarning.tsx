@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+
 interface Props {
     message: string,
     navigateTo: string,
@@ -11,7 +13,8 @@ export default function BottomWarning({
 }: Props) {
     return (
         <div className="flex justify-center text-sm p-1.5">
-            <p>{message}</p> <a href={path} className="underline">{navigateTo}</a>
+            <div>{message}</div>
+            <Link to={path} className="pointer underline pl-1 cursor-pointer">{navigateTo}</Link>
         </div>
     )
 }

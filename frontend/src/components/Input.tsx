@@ -16,7 +16,7 @@ export default function Input({
             {label}
         </div>
         <div>
-            <input className="border border-slate-200 p-1.5 rounded-sm" {...props} placeholder={placeholder ? placeholder : ""} type={type} autoComplete={type == "password"? "current-password" : ""} />
+            <input className="border border-slate-200 p-1.5 rounded-sm w-full" {...props} placeholder={placeholder ? placeholder : ""} type={type} autoComplete={type == "password"? "current-password" : ""} />
         </div>
         </div>
     )
