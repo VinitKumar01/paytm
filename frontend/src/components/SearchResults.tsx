@@ -1,14 +1,27 @@
+import { useNavigate } from "react-router-dom";
 import Button from "./Button";
 
 interface Props {
     firstName: string,
-    lastName: string
+    lastName: string,
+    username: string,
 }
 
 export default function SearchResults({
     firstName,
-    lastName
+    lastName,
+    username
 }: Props) {
+    const navigate = useNavigate();
+    function onClick() {
+        navigate("/send", {
+            state: {
+                username,
+                firstName,
+                lastName
+            }
+        })
+    }
     return (
         <div className="flex justify-between items-center">
             <div className="flex justify-center items-center">
@@ -19,7 +32,7 @@ export default function SearchResults({
                     {firstName} {lastName}
                 </div>
             </div>
-            <Button value="Send Money" type="submit" disabled={false} />
+            <Button onClick={onClick} value="Send Money" type="submit" disabled={false} />
         </div>
     )
 }

@@ -1,13 +1,15 @@
 interface Props {
     label: string,
     placeholder?: string,
-    type: "text" | "password" | "email"
+    type: "text" | "password" | "email",
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export default function Input({
     label,
     placeholder,
     type,
+    onChange,
     ...props
 } : Props) {
     return (
@@ -16,7 +18,7 @@ export default function Input({
             {label}
         </div>
         <div>
-            <input className="border border-slate-200 p-1.5 rounded-sm w-full" {...props} placeholder={placeholder ? placeholder : ""} type={type} autoComplete={type == "password"? "current-password" : ""} />
+            <input className="border border-slate-200 p-1.5 rounded-sm w-full" {...props} placeholder={placeholder ? placeholder : ""} type={type} autoComplete={type == "password"? "current-password" : ""} onChange={onChange}/>
         </div>
         </div>
     )
